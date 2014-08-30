@@ -33,8 +33,8 @@ func (app App) Execute() {
 		args = []string{}
 	}
 
-	builder := NewCommandBuilder()
-	command, err = builder.App(&app).Command(command_name).Build(args)
+	factory := NewCommandFactory()
+	command, err = factory.App(&app).Command(command_name).Create(args)
 	if err != nil {
 		log.Println(err)
 	}
