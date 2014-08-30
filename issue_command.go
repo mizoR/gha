@@ -1,6 +1,8 @@
 package gha
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/google/go-github/github"
@@ -14,6 +16,11 @@ type IssueCommand struct {
 }
 
 func NewIssueCommand(app *App, args []string) (*IssueCommand, error) {
+	if len(args) != 3 {
+		msg := fmt.Sprintf("ArgumentError: wrong number of argument(%d for 3)", len(args))
+		return nil, errors.New(msg)
+	}
+
 	owner := args[0]
 	repo := args[1]
 	number, err := strconv.Atoi(args[2])

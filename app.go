@@ -17,7 +17,7 @@ func NewApp() *App {
 	return &App{}
 }
 
-func (app App) Execute() {
+func (app App) Execute() error {
 	var command Command
 	var command_name string
 	var args []string
@@ -36,13 +36,15 @@ func (app App) Execute() {
 	factory := NewCommandFactory()
 	command, err = factory.App(&app).Command(command_name).Create(args)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 
 	err = command.Execute()
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
+
+	return nil
 }
 
 func (app App) Client() *github.Client {
