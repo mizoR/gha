@@ -33,6 +33,7 @@ func NewIssueCommand(app *App, args []string) (*IssueCommand, error) {
 
 func (c IssueCommand) Execute() error {
 	var issue *github.Issue
+	var comments []github.IssueComment
 	var err error
 
 	issue, _, err = c.app.Client().Issues.Get(c.owner, c.repo, c.number)
@@ -40,8 +41,12 @@ func (c IssueCommand) Execute() error {
 		return err
 	}
 
-	renderer := IssueRenderer{issue: issue}
-	renderer.render()
+	comments, _, err = c.app.Client().Issues.ListComments(c.owner, c.repo, c.number, nil)
+	if err != nil {
+		return err
+	}
+
+	IssueRenderer{issue: issue, comments: comments}.render()
 
 	return nil
 }

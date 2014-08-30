@@ -60,18 +60,26 @@ func (r IssueListRenderer) format() string {
 }
 
 type IssueRenderer struct {
-	issue *github.Issue
+	issue    *github.Issue
+	comments []github.IssueComment
 
 	Renderer
 }
 
 func (r IssueRenderer) render() {
-	padding := GetWinsize().Col - 100
+	padding := GetWinsize().Col - 80
 	issue := r.issue
+	comments := r.comments
+
 	fmt.Printf(r.format(), *issue.State, *issue.Number, r.zeropadding(*issue.Title, padding), *issue.User.Login, (*issue.CreatedAt).String(), *issue.Body)
+	fmt.Printf("\n\n")
+	for i := 0; i < len(comments); i++ {
+		comment := comments[i]
+		fmt.Printf("#%d commented by @%s at %s \n%s \n\n", *comment.ID, *comment.User.Login, *comment.CreatedAt, *comment.Body)
+	}
 }
 
 func (r IssueRenderer) format() string {
-	values := []string{"[%s] \x1b[36m#%d\x1b[0m %s\n  created this issue by \x1b[35m%s\x1b[0m at %s\n\n%s"}
+	values := []string{"[%s] \x1b[36m#%d\x1b[0m %s (created this issue by \x1b[35m@%s\x1b[0m at %s)\n\n%s"}
 	return strings.Join(values, "\t") + "\n"
 }
